@@ -55,7 +55,7 @@ SigninLogs
 
 ![Brute-force detection rule](AR5.png)
 
-![Brute-force alert email](Email- BF.png)
+![Brute-force alert email](Email-BF.png)
 
 ### 2 · OAuth Consent Persistence — `T1098.003`
 A third-party app granted `Mail.Read` — a token that survives password resets and MFA, exactly as Midnight Blizzard used.
@@ -67,8 +67,9 @@ AuditLogs
 ```
 *Severity: High · Entity: Account → AccountUPN · Response: `PB-OAuth-Consent-Notify`*
 
-<!-- IMAGE (rule-oauth.png): OAuth rule review page --> ![OAuth consent detection rule](rule-oauth.png)
-<!-- IMAGE (email-oauth.png): OAuth alert email --> ![OAuth consent alert email](email-oauth.png)
+![OAuth consent detection rule](AR3.png)
+
+![OAuth consent alert email](Email-OC.png)
 
 ### 3 · Privilege Escalation — `T1098.003`
 A privileged Entra role (Helpdesk Administrator) assigned to an account. `coalesce(TargetUser, Actor)` guarantees a non-null entity so enrichment never skips.
@@ -81,8 +82,9 @@ AuditLogs
 ```
 *Severity: High · Entity: Account → AccountForEntity · Response: `PB-PrivEsc-Notify`*
 
-<!-- IMAGE (rule-privesc.png): PrivEsc rule review page --> ![Privilege-escalation detection rule](rule-privesc.png)
-<!-- IMAGE (email-privesc.png): PrivEsc alert email --> ![Privilege-escalation alert email](email-privesc.png)
+![Privilege-escalation detection rule](AR4.png)
+
+![Privilege-escalation alert email](Email-PE.png)
 
 ### 4 · Endpoint Execution (Encoded PowerShell) — `T1059.001` · `T1027`
 Base64-encoded PowerShell on an onboarded host — the highest-confidence, lowest-false-positive signal in the campaign (encoded PowerShell is rare when benign).
@@ -93,8 +95,8 @@ DeviceProcessEvents
 ```
 *Severity: Medium · Entity: Host → DeviceName · 5-min run, 1-hr lookback, suppression on · Response: `PB-Endpoint-Notify`*
 
-<!-- IMAGE (rule-endpoint.png): Endpoint rule review page --> ![Endpoint detection rule](rule-endpoint.png)
-<!-- IMAGE (email-endpoint.png): Endpoint alert email --> ![Endpoint alert email](email-endpoint.png)
+![Endpoint detection rule](AR2.png)
+![Endpoint alert email](Email-Endpoint.png)
 
 ### 5 · Phishing → Conditional Access Block — `T1566`
 A phishing simulation; when a user clicked and authenticated, **Conditional Access blocked the sign-in** from the non-compliant device (`ResultType 53000`) — layered defence catching what the user missed.
@@ -105,8 +107,9 @@ SigninLogs
 ```
 *Severity: Medium · Entity: Account → UserPrincipalName · Response: `PB-Phishing-Notify`*
 
-<!-- IMAGE (rule-phishing.png): Phishing rule review page --> ![Phishing detection rule](rule-phishing.png)
-<!-- IMAGE (email-phishing.png): Phishing alert email --> ![Phishing alert email](email-phishing.png)
+![Phishing detection rule](AR1.png)
+
+![Phishing alert email](Email-CA.png)
 
 ---
 
@@ -118,9 +121,11 @@ Each detection raises an incident → an automation rule fires a Logic App playb
 Sentinel incident → Get IPs → For each: AbuseIPDB (reputation) → Gemini (3–4 sentence SOC brief) → email the SOC
 ```
 
-<!-- IMAGE (playbook-designer.png): Logic App designer for PB-Identity-BruteForce-Notify --> ![SOAR playbook designer flow](playbook-designer.png)
-<!-- IMAGE (playbooks-list.png): Playbooks list --> ![The five SOAR playbooks](playbooks-list.png)
-<!-- IMAGE (automation-rules.png): Automation rules list --> ![Automation rules — one per attack](automation-rules.png)
+![SOAR playbook designer flow](PB.png)
+
+![The five SOAR playbooks](P1.png)
+
+![Automation rules — one per attack](A1.png)
 
 > **Playbook = *what* runs. Automation rule = *when* it runs** (one firing per new incident).
 
@@ -131,8 +136,10 @@ Sentinel incident → Get IPs → For each: AbuseIPDB (reputation) → Gemini (3
 One Sentinel Workbook correlates all five attacks — the view no single incident can give.
 
 <!-- IMAGE (dashboard-full.png): Workbook correlation table --> ![Campaign correlation table](dashboard-full.png)
-<!-- IMAGE (dashboard-bar.png): Detections by attack bar chart --> ![Detections by attack type](dashboard-bar.png)
-<!-- IMAGE (dashboard-timeline-mitre.png): Timeline + MITRE grid --> ![Attack timeline + MITRE coverage](dashboard-timeline-mitre.png)
+
+![Detections by attack type](1.png)
+
+![Attack timeline + MITRE coverage](2.png)
 
 | Tactic | Technique | Attack |
 |---|---|---|
